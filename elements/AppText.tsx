@@ -1,17 +1,22 @@
 import React from "react";
-import { StyleProp, Text, TextProps, TextStyle } from "react-native";
+import { StyleProp, Text, TextProps } from "react-native";
 
 type AppTextProps = TextProps;
 
-function AppText({ children, style }: AppTextProps) {
-	const styles: StyleProp<TextStyle> = {
-		...(style as Object),
-		...{
-			fontFamily: "Urbanist",
-		},
-	};
-
-	return <Text style={styles}>{children}</Text>;
+function AppText({ children, style, ...rest }: AppTextProps) {
+	return (
+		<Text
+			style={[
+				{
+					fontFamily: "Urbanist",
+				},
+				style,
+			]}
+			{...rest}
+		>
+			{children}
+		</Text>
+	);
 }
 
 export default AppText;

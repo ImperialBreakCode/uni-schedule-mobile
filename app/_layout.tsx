@@ -9,6 +9,10 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 	const [loaded] = useFonts({
 		Urbanist: require("../assets/fonts/Urbanist-Regular.ttf"),
+		// semibold unused
+		UrbanistSemiBold: require("../assets/fonts/Urbanist-SemiBold.ttf"),
+		UrbanistLight: require("../assets/fonts/Urbanist-Light.ttf"),
+		UrbanistItalic: require("../assets/fonts/Urbanist-Italic.ttf"),
 	});
 
 	useEffect(() => {
