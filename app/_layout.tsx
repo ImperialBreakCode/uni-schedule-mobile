@@ -8,7 +8,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
 	const [loaded] = useFonts({
-		SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+		Urbanist: require("../assets/fonts/Urbanist-Regular.ttf"),
 	});
 
 	useEffect(() => {
