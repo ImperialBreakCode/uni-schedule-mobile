@@ -1,23 +1,35 @@
-import { Colors } from "@/constants/Colors";
-import { useNavigation } from "expo-router";
-import { useEffect } from "react";
-import { Text } from "react-native";
-import { NativeStackNavigationOptions } from "react-native-screens/lib/typescript/native-stack/types";
+import SubjectBox from "@/components/shared/SubjectBox";
+import ScreenView from "@/elements/ScreenView";
+import { ScheduleItemType, Subject, Week } from "@/models/scheduleTypes";
+import { Text, View } from "react-native";
 
 function Today() {
-	const navigation = useNavigation();
-
-	const options: NativeStackNavigationOptions = {
-		headerStyle: {
-			backgroundColor: Colors.blackFontColor,
-		},
+	const subject: Subject = {
+		name: "Специализиран английски език II част",
+		room: "505",
+		startHour: 12,
+		type: ScheduleItemType.Sem,
+		week: Week.Every,
 	};
 
-	useEffect(() => {
-		navigation.setOptions(options);
-	}, [navigation]);
-
-	return <Text>hello from today</Text>;
+	return (
+		<ScreenView>
+			<View>
+				<SubjectBox
+					subject={subject}
+					hue='200'
+				/>
+				<SubjectBox
+					subject={subject}
+					hue='20'
+				/>
+				<SubjectBox
+					subject={subject}
+					hue='100'
+				/>
+			</View>
+		</ScreenView>
+	);
 }
 
 export default Today;

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -9,7 +10,6 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
 	const [loaded] = useFonts({
 		Urbanist: require("../assets/fonts/Urbanist-Regular.ttf"),
-		// semibold unused
 		UrbanistSemiBold: require("../assets/fonts/Urbanist-SemiBold.ttf"),
 		UrbanistLight: require("../assets/fonts/Urbanist-Light.ttf"),
 		UrbanistItalic: require("../assets/fonts/Urbanist-Italic.ttf"),
@@ -25,5 +25,14 @@ export default function RootLayout() {
 		return null;
 	}
 
-	return <Stack />;
+	return (
+		<Stack
+			screenOptions={{
+				headerStyle: {
+					backgroundColor: Colors.viewBackgroundColor,
+				},
+				headerTintColor: Colors.whiteFontColor,
+			}}
+		/>
+	);
 }
