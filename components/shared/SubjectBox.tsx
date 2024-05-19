@@ -45,7 +45,7 @@ function SubjectBox({ subject, showWeek }: SubjectBoxProps) {
 
 					<View style={style.timeWrapper}>
 						<AppText style={style.baseTime}>
-							{subject.startHour + 1}
+							{subject.startHour + 2}
 						</AppText>
 						<AppText style={[style.baseTime, style.minute]}>
 							00

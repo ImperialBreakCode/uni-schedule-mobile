@@ -16,16 +16,6 @@ function fullSchedule() {
 	const weekTypes = [Week.Every, Week.Even, Week.Odd];
 	const navigatation = useNavigation();
 
-	const headerOptions: NativeStackNavigationOptions = {
-		title: "Full Schedule",
-		headerRight: () => (
-			<WeekTypeBtn
-				text={weekTypes[weekType]}
-				onPress={() => onChangeWeekType()}
-			/>
-		),
-	};
-
 	const [weekType, setWeekType] = useState(0);
 	const [subjectData, setSubjectData] = useState(data);
 
@@ -64,7 +54,15 @@ function fullSchedule() {
 	};
 
 	useEffect(() => {
-		navigatation.setOptions(headerOptions);
+		navigatation.setOptions({
+			title: "Full Schedule",
+			headerRight: () => (
+				<WeekTypeBtn
+					text={weekTypes[weekType]}
+					onPress={() => onChangeWeekType()}
+				/>
+			),
+		});
 		setSubjectData(filterItems(data));
 	}, [navigatation, weekType]);
 
