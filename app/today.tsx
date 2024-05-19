@@ -1,7 +1,8 @@
+import Gap from "@/components/shared/Gap";
 import SubjectBox from "@/components/shared/SubjectBox";
 import ScreenView from "@/elements/ScreenView";
 import { ScheduleItemType, Subject, Week } from "@/models/scheduleTypes";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 function Today() {
 	const subject: Subject = {
@@ -15,18 +16,10 @@ function Today() {
 	return (
 		<ScreenView>
 			<View>
-				<SubjectBox
-					subject={subject}
-					hue='200'
-				/>
-				<SubjectBox
-					subject={subject}
-					hue='20'
-				/>
-				<SubjectBox
-					subject={subject}
-					hue='100'
-				/>
+				<SubjectBox subject={subject} />
+				<SubjectBox subject={subject} />
+				<Gap hoursGap={4} />
+				<SubjectBox subject={subject} />
 			</View>
 		</ScreenView>
 	);

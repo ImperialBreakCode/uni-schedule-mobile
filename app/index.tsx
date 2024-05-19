@@ -51,6 +51,7 @@ function Home() {
 
 						<View style={{ flex: 1 }}>
 							<SecondaryHomeBtn
+								onPress={() => router.push("fullSchedule")}
 								icon={
 									<Calendar
 										name='calendar'

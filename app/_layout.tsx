@@ -27,6 +27,7 @@ export default function RootLayout() {
 
 	return (
 		<Stack
+			initialRouteName='fullSchedule'
 			screenOptions={{
 				headerStyle: {
 					backgroundColor: Colors.viewBackgroundColor,

@@ -3,18 +3,30 @@ import AppText from "@/elements/AppText";
 import { Subject } from "@/models/scheduleTypes";
 import { StyleSheet, View } from "react-native";
 
-interface SubjectBoxProps {
-	subject: Subject;
-	hue: string;
+function getHue(subName: string) {
+	let value = 0;
+
+	for (let i = 0; i < subName.length; i++) {
+		value += subName.charCodeAt(i);
+	}
+
+	value %= 1000;
+
+	return value;
 }
 
-function SubjectBox({ subject, hue }: SubjectBoxProps) {
+interface SubjectBoxProps {
+	subject: Subject;
+	showWeek?: boolean;
+}
+
+function SubjectBox({ subject, showWeek }: SubjectBoxProps) {
 	return (
 		<View
 			style={[
 				style.box,
 				{
-					backgroundColor: `hsl(${hue}, 35%, 55%)`,
+					backgroundColor: `hsl(${getHue(subject.name)}, 45%, 60%)`,
 				},
 			]}
 		>
@@ -55,10 +67,17 @@ function SubjectBox({ subject, hue }: SubjectBoxProps) {
 					type
 					<AppText style={style.moreInfo}> {subject.type}</AppText>
 				</AppText>
-				<AppText>
-					week
-					<AppText style={style.moreInfo}> {subject.week}</AppText>
-				</AppText>
+				{showWeek ? (
+					<AppText>
+						week
+						<AppText style={style.moreInfo}>
+							{" "}
+							{subject.week}
+						</AppText>
+					</AppText>
+				) : (
+					""
+				)}
 			</View>
 		</View>
 	);
