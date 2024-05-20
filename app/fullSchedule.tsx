@@ -9,12 +9,21 @@ import { AppData } from "@/models/listTypes";
 import { Week } from "@/models/scheduleTypes";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, ScrollView, StyleSheet, View } from "react-native";
-import { NativeStackNavigationOptions } from "react-native-screens/lib/typescript/native-stack/types";
+import {
+	FlatList,
+	ScrollView,
+	StyleSheet,
+	View,
+	useWindowDimensions,
+} from "react-native";
 
 function fullSchedule() {
 	const weekTypes = [Week.Every, Week.Even, Week.Odd];
 	const navigatation = useNavigation();
+
+	const width = useWindowDimensions().width;
+	const dayViewWidth = width * 0.8;
+	const spacing = 10;
 
 	const [weekType, setWeekType] = useState(0);
 	const [subjectData, setSubjectData] = useState(data);
@@ -73,11 +82,17 @@ function fullSchedule() {
 					horizontal
 					data={subjectData}
 					keyExtractor={item => item.day}
+					pagingEnabled
+					showsHorizontalScrollIndicator={false}
+					snapToInterval={dayViewWidth + spacing}
+					snapToAlignment='center'
+					decelerationRate='fast'
 					renderItem={({ item }) => {
 						return (
 							<View
 								style={{
-									marginHorizontal: 10,
+									marginHorizontal: spacing / 2,
+									width: dayViewWidth,
 								}}
 							>
 								<AppText style={styles.dayTitle}>
