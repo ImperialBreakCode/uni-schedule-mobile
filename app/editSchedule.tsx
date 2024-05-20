@@ -1,7 +1,9 @@
 import AddItemBtn from "@/components/editSchedule/AddItemBtn";
 import Collapsable from "@/components/editSchedule/Collapsable";
 import RemoveSelectionBtn from "@/components/editSchedule/RemoveSelectionBtn";
+import RightHeaderButtons from "@/components/editSchedule/RightHeaderButtons";
 import SubjectBox from "@/components/shared/SubjectBox";
+import { Colors } from "@/constants/Colors";
 import { forEdit } from "@/data/dummyData";
 import ScreenView from "@/elements/ScreenView";
 import { Subject } from "@/models/scheduleTypes";
@@ -24,12 +26,18 @@ function editSchedule() {
 		title: "Edit Schedule",
 		headerRight: () => <AddItemBtn />,
 		headerLeft: undefined,
+		headerStyle: {
+			backgroundColor: Colors.viewBackgroundColor,
+		},
 	};
 
 	const headerSelectionOptions: NativeStackNavigationOptions = {
 		title: "Selected Item",
-		headerRight: () => <AddItemBtn />,
+		headerRight: () => <RightHeaderButtons />,
 		headerLeft: () => <RemoveSelectionBtn onPress={removeSelection} />,
+		headerStyle: {
+			backgroundColor: "#5e5e5e",
+		},
 	};
 
 	const selectItem = (id: string) => {
