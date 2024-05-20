@@ -37,6 +37,7 @@ function Home() {
 					<View style={homeStyles.secondaryButtons}>
 						<View style={{ flex: 1 }}>
 							<SecondaryHomeBtn
+								onPress={() => router.push("editSchedule")}
 								icon={
 									<Feather
 										name='edit-2'

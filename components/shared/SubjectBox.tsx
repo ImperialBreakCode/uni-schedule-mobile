@@ -18,15 +18,18 @@ function getHue(subName: string) {
 interface SubjectBoxProps {
 	subject: Subject;
 	showWeek?: boolean;
+	selected?: boolean;
 }
 
-function SubjectBox({ subject, showWeek }: SubjectBoxProps) {
+function SubjectBox({ subject, showWeek, selected }: SubjectBoxProps) {
 	return (
 		<View
 			style={[
 				style.box,
 				{
-					backgroundColor: `hsl(${getHue(subject.name)}, 45%, 60%)`,
+					backgroundColor: selected
+						? Colors.whiteFontColor
+						: `hsl(${getHue(subject.name)}, 45%, 60%)`,
 				},
 			]}
 		>

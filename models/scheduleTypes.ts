@@ -11,6 +11,7 @@ export enum ScheduleItemType {
 }
 
 export type Subject = {
+	id: string;
 	startHour: number;
 	week: Week;
 	room: string;

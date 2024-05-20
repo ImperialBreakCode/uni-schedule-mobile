@@ -18,7 +18,7 @@ import {
 } from "react-native";
 
 function fullSchedule() {
-	const weekTypes = [Week.Every, Week.Even, Week.Odd];
+	const weekTypes = [Week.Even, Week.Odd];
 	const navigatation = useNavigation();
 
 	const width = useWindowDimensions().width;
@@ -29,13 +29,7 @@ function fullSchedule() {
 	const [subjectData, setSubjectData] = useState(data);
 
 	const onChangeWeekType = () => {
-		setWeekType(prevState => {
-			if (prevState === 2) {
-				return 0;
-			} else {
-				return ++prevState;
-			}
-		});
+		setWeekType(prevState => Math.abs(prevState - 1));
 	};
 
 	const filterItems = (data: AppData): AppData => {
@@ -43,11 +37,10 @@ function fullSchedule() {
 
 		data.forEach(item => {
 			const filteredItems = item.dayData.filter(x => {
-				if (
-					typeof x !== "number" &&
-					weekTypes[weekType] !== Week.Every
-				) {
-					return x.week === weekTypes[weekType];
+				if (typeof x !== "number") {
+					return (
+						x.week === weekTypes[weekType] || x.week === Week.Every
+					);
 				}
 
 				return true;
