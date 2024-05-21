@@ -4,11 +4,12 @@ import RemoveSelectionBtn from "@/components/editSchedule/RemoveSelectionBtn";
 import RightHeaderButtons from "@/components/editSchedule/RightHeaderButtons";
 import SubjectBox from "@/components/shared/SubjectBox";
 import { Colors } from "@/constants/Colors";
-import { forEdit } from "@/data/dummyData";
+//import { forEdit } from "@/data/dummyData";
 import ScreenView from "@/elements/ScreenView";
+import { AppData } from "@/models/listTypes";
 import { Subject } from "@/models/scheduleTypes";
 import { useNavigation } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	Pressable,
@@ -16,11 +17,14 @@ import {
 	TouchableWithoutFeedback,
 } from "react-native";
 import { NativeStackNavigationOptions } from "react-native-screens/lib/typescript/native-stack/types";
+import { DataContext } from "./_layout";
 
 function editSchedule() {
 	const navigation = useNavigation();
+	const dataContext = useContext(DataContext);
 
 	const [selectedItemId, setSelectedItemId] = useState<string | null>();
+	const [editData, setEditData] = useState<AppData>();
 
 	const headerOptions: NativeStackNavigationOptions = {
 		title: "Edit Schedule",
@@ -51,6 +55,14 @@ function editSchedule() {
 	};
 
 	useEffect(() => {
+		async function initData() {
+			setEditData(await dataContext.getWeekData());
+		}
+
+		initData();
+	}, []);
+
+	useEffect(() => {
 		if (selectedItemId) {
 			navigation.setOptions(headerSelectionOptions);
 		} else {
@@ -67,7 +79,7 @@ function editSchedule() {
 						style={{
 							marginTop: 30,
 						}}
-						data={forEdit}
+						data={editData}
 						keyExtractor={item => item.day.toString()}
 						renderItem={({ item }) => {
 							return (

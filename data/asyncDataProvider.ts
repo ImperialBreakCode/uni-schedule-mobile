@@ -1,5 +1,6 @@
 import { DataProviderInterface } from "@/models/dataInterfaces";
-import { AppData } from "@/models/listTypes";
+import { AppData, DataItem } from "@/models/listTypes";
+import { Subject } from "@/models/scheduleTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AsyncDataProvider implements DataProviderInterface {
@@ -11,7 +12,7 @@ class AsyncDataProvider implements DataProviderInterface {
 	}
 
 	async seedData(): Promise<void> {
-		AsyncStorage.clear();
+		//AsyncStorage.clear();
 
 		if (!(await AsyncStorage.getItem(this._scheduleKey))) {
 			await AsyncStorage.setItem(
@@ -30,6 +31,36 @@ class AsyncDataProvider implements DataProviderInterface {
 		}
 
 		return data;
+	}
+
+	async getProcessedWeekData(): Promise<AppData> {
+		const data = await this.getWeekData();
+		const processedData: AppData = [];
+
+		for (let i = 0; i < data.length; i++) {
+			processedData.push({ day: data[i].day, dayData: [] });
+
+			if (data[i].dayData.length > 0) {
+				processedData[i].dayData.push(data[i].dayData[0]);
+			}
+
+			for (let j = 1; j < data[i].dayData.length; j++) {
+				const precedingSubject = data[i].dayData[j - 1] as Subject;
+				const currentSubject = data[i].dayData[j] as Subject;
+
+				if (currentSubject.startHour - precedingSubject.startHour > 2) {
+					processedData[i].dayData.push(
+						currentSubject.startHour -
+							precedingSubject.startHour -
+							2
+					);
+				}
+
+				processedData[i].dayData.push(data[i].dayData[j]);
+			}
+		}
+
+		return processedData;
 	}
 }
 

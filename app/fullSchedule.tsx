@@ -2,7 +2,6 @@ import WeekTypeBtn from "@/components/fullSchedule/WeekTypeBtn";
 import Gap from "@/components/shared/Gap";
 import SubjectBox from "@/components/shared/SubjectBox";
 import { Colors } from "@/constants/Colors";
-//import { data } from "@/data/dummyData";
 import AppText from "@/elements/AppText";
 import ScreenView from "@/elements/ScreenView";
 import { AppData } from "@/models/listTypes";
@@ -60,9 +59,9 @@ function fullSchedule() {
 
 	useEffect(() => {
 		async function initData() {
-			const data = await dataProvider.getWeekData();
+			const data = await dataProvider.getProcessedWeekData();
 			setUnfilteredData(data);
-			setSubjectData(data);
+			setSubjectData(filterItems(data));
 		}
 
 		initData();

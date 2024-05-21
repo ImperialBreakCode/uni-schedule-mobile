@@ -29,7 +29,7 @@ function SubjectBox({ subject, showWeek, selected }: SubjectBoxProps) {
 				{
 					backgroundColor: selected
 						? Colors.whiteFontColor
-						: `hsl(${getHue(subject.name)}, 45%, 60%)`,
+						: `hsl(${getHue(subject.name)}, 40%, 60%)`,
 				},
 			]}
 		>
