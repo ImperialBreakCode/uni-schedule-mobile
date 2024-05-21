@@ -4,7 +4,6 @@ import RemoveSelectionBtn from "@/components/editSchedule/RemoveSelectionBtn";
 import RightHeaderButtons from "@/components/editSchedule/RightHeaderButtons";
 import SubjectBox from "@/components/shared/SubjectBox";
 import { Colors } from "@/constants/Colors";
-//import { forEdit } from "@/data/dummyData";
 import ScreenView from "@/elements/ScreenView";
 import { AppData } from "@/models/listTypes";
 import { Subject } from "@/models/scheduleTypes";

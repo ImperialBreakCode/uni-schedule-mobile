@@ -1,26 +1,36 @@
 import Gap from "@/components/shared/Gap";
 import SubjectBox from "@/components/shared/SubjectBox";
 import ScreenView from "@/elements/ScreenView";
-import { ScheduleItemType, Subject, Week } from "@/models/scheduleTypes";
-import { View } from "react-native";
+import { DataItem } from "@/models/listTypes";
+import { useContext, useEffect, useState } from "react";
+import { FlatList, View } from "react-native";
+import { DataContext } from "./_layout";
 
 function Today() {
-	const subject: Subject = {
-		name: "Специализиран английски език II част",
-		room: "505",
-		startHour: 12,
-		type: ScheduleItemType.Sem,
-		week: Week.Every,
-	};
+	const dataContext = useContext(DataContext);
+
+	const [data, setData] = useState<DataItem[]>([]);
+
+	useEffect(() => {
+		async function initData() {
+			setData(await dataContext.getTodaysSchedule());
+		}
+
+		initData();
+	}, []);
 
 	return (
 		<ScreenView>
-			<View>
-				<SubjectBox subject={subject} />
-				<SubjectBox subject={subject} />
-				<Gap hoursGap={4} />
-				<SubjectBox subject={subject} />
-			</View>
+			<FlatList
+				data={data}
+				renderItem={({ item }) => {
+					if (typeof item === "number") {
+						return <Gap hoursGap={item} />;
+					}
+
+					return <SubjectBox subject={item} />;
+				}}
+			/>
 		</ScreenView>
 	);
 }

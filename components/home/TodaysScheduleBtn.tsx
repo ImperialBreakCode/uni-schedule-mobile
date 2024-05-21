@@ -1,18 +1,48 @@
 import { Colors } from "@/constants/Colors";
 import AppText from "@/elements/AppText";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { DataContext } from "@/app/_layout";
+import { Subject } from "@/models/scheduleTypes";
 
 function TodaysScheduleBtn() {
+	const dataContext = useContext(DataContext);
+
+	const [subjectNext, setSubjectNext] = useState<Subject | null>();
+
+	useEffect(() => {
+		async function initData() {
+			const nextSubjects = (await dataContext.getTodaysSchedule()).filter(
+				x =>
+					typeof x !== "number" && x.startHour > new Date().getHours()
+			);
+
+			setSubjectNext(
+				nextSubjects.length > 0 ? (nextSubjects[0] as Subject) : null
+			);
+		}
+
+		initData();
+	}, []);
+
 	return (
 		<View style={styles.buttonWrapper}>
 			<View style={styles.infoBox}>
-				<AppText style={styles.nowIdicator}>Now:</AppText>
-				<AppText style={styles.subjectInfo}>
-					Алгоритми и структури от данни
-				</AppText>
-				<AppText style={styles.infoHours}>12:15 - 14:00</AppText>
+				{subjectNext ? (
+					<>
+						<AppText style={styles.nowIdicator}>Next:</AppText>
+						<AppText style={styles.subjectInfo}>
+							{subjectNext.name}
+						</AppText>
+						<AppText style={styles.infoHours}>
+							{subjectNext.startHour}:15 -{" "}
+							{subjectNext.startHour + 2}:00
+						</AppText>
+					</>
+				) : (
+					""
+				)}
 			</View>
 			<View style={styles.btnFooter}>
 				<AppText style={styles.footerText}>Today's schedule</AppText>

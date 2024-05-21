@@ -10,6 +10,8 @@ export enum WeekDay {
 	Wednesday = "Wednesday",
 	Thursday = "Thursday",
 	Friday = "Friday",
+	Saturday = "Saturday",
+	Sunday = "Sunday",
 }
 
 export enum ScheduleItemType {

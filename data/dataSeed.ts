@@ -132,6 +132,8 @@ const dataObject: { [key: string]: DataItem[] } = {
 			name: "Специализиран английски език II част",
 		},
 	],
+	Saturday: [],
+	Sunday: [],
 };
 
 export const dataSeed: AppData = Object.keys(WeekDay).map(key => {
