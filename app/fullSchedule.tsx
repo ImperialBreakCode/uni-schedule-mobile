@@ -2,13 +2,13 @@ import WeekTypeBtn from "@/components/fullSchedule/WeekTypeBtn";
 import Gap from "@/components/shared/Gap";
 import SubjectBox from "@/components/shared/SubjectBox";
 import { Colors } from "@/constants/Colors";
-import { data } from "@/data/dummyData";
+//import { data } from "@/data/dummyData";
 import AppText from "@/elements/AppText";
 import ScreenView from "@/elements/ScreenView";
 import { AppData } from "@/models/listTypes";
 import { Week } from "@/models/scheduleTypes";
 import { useNavigation } from "expo-router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
 	ScrollView,
@@ -16,17 +16,20 @@ import {
 	View,
 	useWindowDimensions,
 } from "react-native";
+import { DataContext } from "./_layout";
 
 function fullSchedule() {
 	const weekTypes = [Week.Even, Week.Odd];
 	const navigatation = useNavigation();
+	const dataProvider = useContext(DataContext);
 
 	const width = useWindowDimensions().width;
 	const dayViewWidth = width * 0.8;
-	const spacing = 10;
+	const dayViewSpacing = 10;
 
 	const [weekType, setWeekType] = useState(0);
-	const [subjectData, setSubjectData] = useState(data);
+	const [unfilteredData, setUnfilteredData] = useState<AppData>([]);
+	const [subjectData, setSubjectData] = useState<AppData>([]);
 
 	const onChangeWeekType = () => {
 		setWeekType(prevState => Math.abs(prevState - 1));
@@ -56,6 +59,16 @@ function fullSchedule() {
 	};
 
 	useEffect(() => {
+		async function initData() {
+			const data = await dataProvider.getWeekData();
+			setUnfilteredData(data);
+			setSubjectData(data);
+		}
+
+		initData();
+	}, []);
+
+	useEffect(() => {
 		navigatation.setOptions({
 			title: "Full Schedule",
 			headerRight: () => (
@@ -65,7 +78,8 @@ function fullSchedule() {
 				/>
 			),
 		});
-		setSubjectData(filterItems(data));
+
+		setSubjectData(filterItems(unfilteredData));
 	}, [navigatation, weekType]);
 
 	return (
@@ -74,17 +88,17 @@ function fullSchedule() {
 				<FlatList
 					horizontal
 					data={subjectData}
-					keyExtractor={item => item.day}
+					keyExtractor={item => item.day.toString()}
 					pagingEnabled
 					showsHorizontalScrollIndicator={false}
-					snapToInterval={dayViewWidth + spacing}
+					snapToInterval={dayViewWidth + dayViewSpacing}
 					snapToAlignment='center'
 					decelerationRate='fast'
 					renderItem={({ item }) => {
 						return (
 							<View
 								style={{
-									marginHorizontal: spacing / 2,
+									marginHorizontal: dayViewSpacing / 2,
 									width: dayViewWidth,
 								}}
 							>

@@ -1,7 +1,7 @@
-import { Subject } from "./scheduleTypes";
+import { Subject, WeekDay } from "./scheduleTypes";
 
 export type AppData = {
-	day: string;
+	day: WeekDay;
 	dayData: DataItem[];
 }[];
 

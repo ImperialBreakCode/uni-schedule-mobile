@@ -10,7 +10,7 @@ function getHue(subName: string) {
 		value += subName.charCodeAt(i);
 	}
 
-	value %= 1000;
+	value %= 500;
 
 	return value;
 }

@@ -68,10 +68,10 @@ function editSchedule() {
 							marginTop: 30,
 						}}
 						data={forEdit}
-						keyExtractor={item => item.day}
+						keyExtractor={item => item.day.toString()}
 						renderItem={({ item }) => {
 							return (
-								<Collapsable title={item.day}>
+								<Collapsable title={item.day.toString()}>
 									<FlatList
 										data={item.dayData}
 										keyExtractor={item =>

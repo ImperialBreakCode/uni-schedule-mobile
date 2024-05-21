@@ -1,5 +1,5 @@
 import { AppData, DataItem } from "@/models/listTypes";
-import { ScheduleItemType, Week } from "@/models/scheduleTypes";
+import { ScheduleItemType, Week, WeekDay } from "@/models/scheduleTypes";
 
 const dayData: DataItem[] = [
 	{
@@ -66,30 +66,30 @@ const editData: DataItem[] = [
 
 export const data: AppData = [
 	{
-		day: "monday",
+		day: WeekDay.Monday,
 		dayData: dayData,
 	},
 	{
-		day: "tuesday",
+		day: WeekDay.Thursday,
 		dayData: dayData,
 	},
 	{
-		day: "wednesday",
+		day: WeekDay.Wednesday,
 		dayData: dayData,
 	},
 	{
-		day: "friday",
+		day: WeekDay.Friday,
 		dayData: dayData,
 	},
 ];
 
 export const forEdit: AppData = [
 	{
-		day: "monday",
+		day: WeekDay.Monday,
 		dayData: editData,
 	},
 	{
-		day: "tuesday",
+		day: WeekDay.Thursday,
 		dayData: editData,
 	},
 ];

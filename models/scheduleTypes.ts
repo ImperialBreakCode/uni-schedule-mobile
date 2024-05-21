@@ -4,6 +4,14 @@ export enum Week {
 	Every = "Every",
 }
 
+export enum WeekDay {
+	Monday = "Monday",
+	Tuesday = "Tuesday",
+	Wednesday = "Wednesday",
+	Thursday = "Thursday",
+	Friday = "Friday",
+}
+
 export enum ScheduleItemType {
 	Sem = "Sem",
 	Lec = "Lecture",
