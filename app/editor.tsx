@@ -2,19 +2,15 @@ import { Button, StyleSheet, TextInput, View } from "react-native";
 import ScreenView from "@/elements/ScreenView";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import Select, { SelectItem } from "@/components/editor/Select";
-import { ScheduleItemType, Week, WeekDay } from "@/models/scheduleTypes";
+import {
+	EditorData,
+	ScheduleItemType,
+	Week,
+	WeekDay,
+} from "@/models/scheduleTypes";
 import { Colors } from "@/constants/Colors";
 import { useContext, useEffect, useState } from "react";
 import { DataContext } from "./_layout";
-
-type EditorData = {
-	room: string;
-	name: string;
-	startingHour: string;
-	day: WeekDay | null;
-	weekType: Week | null;
-	subjectType: ScheduleItemType | null;
-};
 
 function Editor() {
 	const navigation = useNavigation();
@@ -58,6 +54,7 @@ function Editor() {
 	};
 
 	const [data, setData] = useState<EditorData>({
+		id: null,
 		room: "",
 		name: "",
 		startingHour: "",
@@ -72,6 +69,7 @@ function Editor() {
 
 			if (item) {
 				setData({
+					id: item.id,
 					room: item.room.toString(),
 					name: item.name,
 					startingHour: item.startHour.toString(),
@@ -101,8 +99,12 @@ function Editor() {
 		});
 	};
 
-	const onSave = () => {
-		if (Object.values(data).some(x => x === null || x === "")) {
+	const onSave = async () => {
+		if (
+			Object.entries(data).some(
+				x => (x[1] === null || x[1] === "") && x[0] != "id"
+			)
+		) {
 			alert("All fields are required");
 			return;
 		}
@@ -116,6 +118,16 @@ function Editor() {
 		) {
 			alert("The starting hour should be a number between 0 and 23");
 			return;
+		}
+
+		if (Object.keys(params).length === 0) {
+			const error = await dataContext.saveData(data);
+
+			if (error) {
+				alert(error);
+			} else {
+				navigation.goBack();
+			}
 		}
 	};
 

@@ -1,6 +1,12 @@
 import { DataProviderInterface } from "@/models/dataInterfaces";
 import { AppData, DataItem } from "@/models/listTypes";
-import { Subject, SubjectWithDay, Week, WeekDay } from "@/models/scheduleTypes";
+import {
+	EditorData,
+	Subject,
+	SubjectWithDay,
+	Week,
+	WeekDay,
+} from "@/models/scheduleTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AsyncDataProvider implements DataProviderInterface {
@@ -14,7 +20,7 @@ class AsyncDataProvider implements DataProviderInterface {
 	}
 
 	async seedData(): Promise<void> {
-		//AsyncStorage.clear();
+		AsyncStorage.clear();
 
 		if (!(await AsyncStorage.getItem(this._scheduleKey))) {
 			await AsyncStorage.setItem(
@@ -22,6 +28,40 @@ class AsyncDataProvider implements DataProviderInterface {
 				JSON.stringify(this._seedData)
 			);
 		}
+	}
+
+	async saveData(data: EditorData): Promise<string | null> {
+		const weekData = await this.getWeekData();
+		const dayData = weekData.filter(x => x.day === data.day)[0].dayData;
+
+		const checkForExistingItem = dayData.filter(
+			x =>
+				Math.abs((x as Subject).startHour - Number(data.startingHour)) <
+					2 &&
+				((x as Subject).week === Week.Every ||
+					data.weekType === Week.Every ||
+					(x as Subject).week === data.weekType)
+		);
+
+		if (checkForExistingItem.length > 0) {
+			return "Schedule item already exists with similar starting hour.";
+		}
+
+		const dataToInsert = this.convertEditorToAppDataObj(data);
+		const dayIndex = weekData.findIndex(x => x.day === data.day);
+		const nextSubjIndex = dayData.findIndex(
+			x => (x as Subject).startHour >= dataToInsert.startHour
+		);
+
+		weekData[dayIndex].dayData = [
+			...dayData.splice(0, nextSubjIndex),
+			dataToInsert,
+			...dayData.slice(nextSubjIndex - 1),
+		];
+
+		AsyncStorage.setItem(this._scheduleKey, JSON.stringify(weekData));
+
+		return null;
 	}
 
 	async getById(id: string): Promise<SubjectWithDay | null> {
@@ -130,6 +170,19 @@ class AsyncDataProvider implements DataProviderInterface {
 		}
 
 		return processedData;
+	}
+
+	private convertEditorToAppDataObj(data: EditorData): Subject {
+		const subject: Subject = {
+			id: data.id ?? Date.now() + "d" + Math.random(),
+			startHour: Number(data.startingHour),
+			week: data.weekType!,
+			type: data.subjectType!,
+			name: data.name,
+			room: data.room,
+		};
+
+		return subject;
 	}
 }
 

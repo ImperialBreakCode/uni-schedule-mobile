@@ -32,3 +32,13 @@ export type Subject = {
 export type SubjectWithDay = Subject & {
 	day: WeekDay;
 };
+
+export type EditorData = {
+	id: string | null;
+	room: string;
+	name: string;
+	startingHour: string;
+	day: WeekDay | null;
+	weekType: Week | null;
+	subjectType: ScheduleItemType | null;
+};
