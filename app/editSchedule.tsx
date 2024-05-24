@@ -7,7 +7,7 @@ import { Colors } from "@/constants/Colors";
 import ScreenView from "@/elements/ScreenView";
 import { AppData } from "@/models/listTypes";
 import { Subject } from "@/models/scheduleTypes";
-import { useNavigation } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	FlatList,
@@ -18,8 +18,9 @@ import {
 import { NativeStackNavigationOptions } from "react-native-screens/lib/typescript/native-stack/types";
 import { DataContext } from "./_layout";
 
-function editSchedule() {
+function EditSchedule() {
 	const navigation = useNavigation();
+	const router = useRouter();
 	const dataContext = useContext(DataContext);
 
 	const [selectedItemId, setSelectedItemId] = useState<string | null>();
@@ -27,7 +28,7 @@ function editSchedule() {
 
 	const headerOptions: NativeStackNavigationOptions = {
 		title: "Edit Schedule",
-		headerRight: () => <AddItemBtn />,
+		headerRight: () => <AddItemBtn onPress={() => router.push("editor")} />,
 		headerLeft: undefined,
 		headerStyle: {
 			backgroundColor: Colors.viewBackgroundColor,
@@ -121,4 +122,4 @@ function editSchedule() {
 	);
 }
 
-export default editSchedule;
+export default EditSchedule;

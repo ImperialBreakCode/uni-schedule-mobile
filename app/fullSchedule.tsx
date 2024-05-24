@@ -17,7 +17,7 @@ import {
 } from "react-native";
 import { DataContext } from "./_layout";
 
-function fullSchedule() {
+function FullSchedule() {
 	const weekTypes = [Week.Even, Week.Odd];
 	const navigatation = useNavigation();
 	const dataProvider = useContext(DataContext);
@@ -137,4 +137,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default fullSchedule;
+export default FullSchedule;

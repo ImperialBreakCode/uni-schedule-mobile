@@ -3,7 +3,7 @@ import SubjectBox from "@/components/shared/SubjectBox";
 import ScreenView from "@/elements/ScreenView";
 import { DataItem } from "@/models/listTypes";
 import { useContext, useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList } from "react-native";
 import { DataContext } from "./_layout";
 
 function Today() {
