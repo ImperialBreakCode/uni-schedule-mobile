@@ -1,6 +1,6 @@
 import { DataProviderInterface } from "@/models/dataInterfaces";
 import { AppData, DataItem } from "@/models/listTypes";
-import { Subject, Week, WeekDay } from "@/models/scheduleTypes";
+import { Subject, SubjectWithDay, Week, WeekDay } from "@/models/scheduleTypes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AsyncDataProvider implements DataProviderInterface {
@@ -22,6 +22,30 @@ class AsyncDataProvider implements DataProviderInterface {
 				JSON.stringify(this._seedData)
 			);
 		}
+	}
+
+	async getById(id: string): Promise<SubjectWithDay | null> {
+		const weekData = await this.getWeekData();
+
+		let subject: Subject | null = null;
+		let day: WeekDay = WeekDay.Friday;
+
+		for (let i = 0; i < weekData.length; i++) {
+			let avaliableItems = weekData[i].dayData.filter(
+				s => (s as Subject).id === id
+			);
+
+			day = weekData[i].day;
+
+			if (avaliableItems.length > 0) {
+				subject = avaliableItems[0] as Subject;
+				break;
+			}
+		}
+
+		let subjectWithDay = subject ? { ...subject, day: day } : null;
+
+		return subjectWithDay;
 	}
 
 	async getTodaysSchedule(): Promise<DataItem[]> {

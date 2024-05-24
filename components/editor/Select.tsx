@@ -15,17 +15,18 @@ interface SelectProps {
 	onSelect: (selectedItem: any, index: number) => void;
 	placeholder: string;
 	style?: StyleProp<ViewStyle>;
+	defaultValueByIndex?: number | undefined;
 }
 
 function Select({ placeholder, style, ...rest }: SelectProps) {
 	return (
 		<View style={style}>
 			<SelectDropdown
+				{...rest}
 				dropdownStyle={{
 					backgroundColor: "#2b2b2b",
 					borderRadius: 10,
 				}}
-				{...rest}
 				renderButton={(selectedItem, isOpen) => {
 					return (
 						<View style={styles.button}>

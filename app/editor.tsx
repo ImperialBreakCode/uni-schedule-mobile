@@ -2,13 +2,24 @@ import { Button, StyleSheet, TextInput, View } from "react-native";
 import ScreenView from "@/elements/ScreenView";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import Select, { SelectItem } from "@/components/editor/Select";
-import { Week, WeekDay } from "@/models/scheduleTypes";
+import { ScheduleItemType, Week, WeekDay } from "@/models/scheduleTypes";
 import { Colors } from "@/constants/Colors";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { DataContext } from "./_layout";
+
+type EditorData = {
+	room: string;
+	name: string;
+	startingHour: string;
+	day: WeekDay | null;
+	weekType: Week | null;
+	subjectType: ScheduleItemType | null;
+};
 
 function Editor() {
 	const navigation = useNavigation();
 	const params = useLocalSearchParams();
+	const dataContext = useContext(DataContext);
 
 	const daysSelectData = Object.keys(WeekDay).map(x => {
 		const newObject: SelectItem = {
@@ -28,7 +39,7 @@ function Editor() {
 		return newObject;
 	});
 
-	const itemTypeData = Object.keys(Week).map(x => {
+	const itemTypeData = Object.keys(ScheduleItemType).map(x => {
 		const newObject: SelectItem = {
 			title: x,
 			value: x,
@@ -37,7 +48,16 @@ function Editor() {
 		return newObject;
 	});
 
-	const [data, setData] = useState({
+	const getEnumIndex = (
+		enumType: object,
+		value: string | null
+	): number | undefined => {
+		if (value) {
+			return Object.values(enumType).indexOf(value);
+		}
+	};
+
+	const [data, setData] = useState<EditorData>({
 		room: "",
 		name: "",
 		startingHour: "",
@@ -47,9 +67,29 @@ function Editor() {
 	});
 
 	useEffect(() => {
+		async function initEditData() {
+			const item = await dataContext.getById(params.itemId as string);
+
+			if (item) {
+				setData({
+					room: item.room.toString(),
+					name: item.name,
+					startingHour: item.startHour.toString(),
+					day: item.day,
+					weekType: item.week,
+					subjectType: item.type,
+				});
+			}
+		}
+
+		if (Object.keys(params).length !== 0) {
+			initEditData();
+		}
+	}, []);
+
+	useEffect(() => {
 		if (Object.keys(params).length !== 0) {
 			navigation.setOptions({ title: "Edit schedule item" });
-			console.log(params.itemId);
 		} else {
 			navigation.setOptions({ title: "Add schedule item" });
 		}
@@ -109,6 +149,7 @@ function Editor() {
 					onSelect={(item, index) =>
 						handleChange({ day: item.value })
 					}
+					defaultValueByIndex={getEnumIndex(WeekDay, data.day)}
 					placeholder='Select day'
 				/>
 				<Select
@@ -117,6 +158,7 @@ function Editor() {
 					onSelect={(item, index) =>
 						handleChange({ weekType: item.value })
 					}
+					defaultValueByIndex={getEnumIndex(Week, data.weekType)}
 					placeholder='Select week type'
 				/>
 				<Select
@@ -125,6 +167,10 @@ function Editor() {
 					onSelect={(item, index) =>
 						handleChange({ subjectType: item.value })
 					}
+					defaultValueByIndex={getEnumIndex(
+						ScheduleItemType,
+						data.subjectType
+					)}
 					placeholder='Select subject type'
 				/>
 

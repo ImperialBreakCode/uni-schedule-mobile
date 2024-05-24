@@ -28,3 +28,7 @@ export type Subject = {
 	name: string;
 	type: ScheduleItemType;
 };
+
+export type SubjectWithDay = Subject & {
+	day: WeekDay;
+};
