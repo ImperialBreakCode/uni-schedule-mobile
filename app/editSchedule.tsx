@@ -37,7 +37,16 @@ function EditSchedule() {
 
 	const headerSelectionOptions: NativeStackNavigationOptions = {
 		title: "Selected Item",
-		headerRight: () => <RightHeaderButtons />,
+		headerRight: () => (
+			<RightHeaderButtons
+				onEditPress={() =>
+					router.push({
+						pathname: "editor",
+						params: { itemId: selectedItemId },
+					})
+				}
+			/>
+		),
 		headerLeft: () => <RemoveSelectionBtn onPress={removeSelection} />,
 		headerStyle: {
 			backgroundColor: "#5e5e5e",
