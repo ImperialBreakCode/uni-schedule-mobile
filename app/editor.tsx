@@ -1,6 +1,6 @@
 import { Button, StyleSheet, TextInput, View } from "react-native";
 import ScreenView from "@/elements/ScreenView";
-import { useLocalSearchParams, useNavigation } from "expo-router";
+import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
 import Select, { SelectItem } from "@/components/editor/Select";
 import {
 	EditorData,
@@ -120,14 +120,18 @@ function Editor() {
 			return;
 		}
 
-		if (Object.keys(params).length === 0) {
-			const error = await dataContext.saveData(data);
+		let error;
 
-			if (error) {
-				alert(error);
-			} else {
-				navigation.goBack();
-			}
+		if (Object.keys(params).length === 0) {
+			error = await dataContext.saveData(data);
+		} else {
+			error = await dataContext.updateItem(data);
+		}
+
+		if (error) {
+			alert(error);
+		} else {
+			navigation.goBack();
 		}
 	};
 

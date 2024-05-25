@@ -11,6 +11,7 @@ import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	Alert,
+	BackHandler,
 	FlatList,
 	Pressable,
 	ScrollView,

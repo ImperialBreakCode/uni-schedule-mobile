@@ -30,8 +30,28 @@ class AsyncDataProvider implements DataProviderInterface {
 		}
 	}
 
-	async deleteById(id: string): Promise<void> {
+	async updateItem(data: EditorData): Promise<string | null> {
+		const deletedItem = await this.deleteById(data.id!);
+		const error = await this.saveData(data);
+
+		const deletedEditorData = {
+			...deletedItem,
+			day: data.day,
+			startingHour: deletedItem?.startHour.toString(),
+			weekType: data.weekType,
+			subjectType: data.subjectType,
+		} as EditorData;
+
+		if (error) {
+			await this.saveData(deletedEditorData);
+		}
+
+		return error;
+	}
+
+	async deleteById(id: string): Promise<Subject | null> {
 		const data = await this.getWeekData();
+		let deletedItem: Subject[] | null = null;
 
 		for (let i = 0; i < data.length; i++) {
 			let itemIndex = data[i].dayData.findIndex(
@@ -39,17 +59,50 @@ class AsyncDataProvider implements DataProviderInterface {
 			);
 
 			if (itemIndex !== -1) {
-				data[i].dayData.splice(itemIndex, 1);
+				deletedItem = data[i].dayData.splice(itemIndex, 1) as Subject[];
 				break;
 			}
 		}
 
 		await AsyncStorage.setItem(this._scheduleKey, JSON.stringify(data));
+
+		if (deletedItem && deletedItem?.length > 0) {
+			return deletedItem[0];
+		}
+
+		return null;
 	}
 
 	async saveData(data: EditorData): Promise<string | null> {
-		const weekData = await this.getWeekData();
-		const dayData = weekData.filter(x => x.day === data.day)[0].dayData;
+		let weekData = await this.getWeekData();
+
+		const dayArr = weekData.filter(x => x.day === data.day);
+
+		if (dayArr.length === 0) {
+			const weekDayArr = Object.values(WeekDay);
+			const newDayIndex = weekDayArr.indexOf(data.day!);
+			let realIndex = weekData.findIndex(
+				x => weekDayArr.indexOf(x.day) - 1 === newDayIndex
+			);
+
+			if (realIndex === -1) {
+				weekData.push({
+					day: data.day!,
+					dayData: [],
+				});
+			} else {
+				weekData = [
+					...weekData.splice(0, realIndex),
+					{
+						day: data.day!,
+						dayData: [],
+					},
+					...weekData.splice(realIndex - 2),
+				];
+			}
+		}
+
+		const dayData = dayArr.length === 0 ? [] : dayArr[0].dayData;
 
 		const checkForExistingItem = dayData.filter(
 			x =>
@@ -70,11 +123,15 @@ class AsyncDataProvider implements DataProviderInterface {
 			x => (x as Subject).startHour >= dataToInsert.startHour
 		);
 
-		weekData[dayIndex].dayData = [
-			...dayData.splice(0, nextSubjIndex),
-			dataToInsert,
-			...dayData.slice(nextSubjIndex - 1),
-		];
+		if (nextSubjIndex === -1) {
+			weekData[dayIndex].dayData.push(dataToInsert);
+		} else {
+			weekData[dayIndex].dayData = [
+				...dayData.splice(0, nextSubjIndex),
+				dataToInsert,
+				...dayData.slice(nextSubjIndex - 2),
+			];
+		}
 
 		AsyncStorage.setItem(this._scheduleKey, JSON.stringify(weekData));
 

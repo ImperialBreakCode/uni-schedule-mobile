@@ -1,5 +1,5 @@
 import { AppData, DataItem } from "./listTypes";
-import { EditorData, SubjectWithDay } from "./scheduleTypes";
+import { EditorData, Subject, SubjectWithDay } from "./scheduleTypes";
 
 export interface DataProviderInterface {
 	seedData(): Promise<void>;
@@ -8,5 +8,6 @@ export interface DataProviderInterface {
 	getTodaysSchedule(): Promise<DataItem[]>;
 	getById(id: string): Promise<SubjectWithDay | null>;
 	saveData(data: EditorData): Promise<string | null>;
-	deleteById(id: string): Promise<void>;
+	deleteById(id: string): Promise<Subject | null>;
+	updateItem(data: EditorData): Promise<string | null>;
 }
