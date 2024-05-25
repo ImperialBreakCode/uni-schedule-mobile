@@ -107,8 +107,8 @@ const style = StyleSheet.create({
 		fontFamily: "UrbanistSemiBold",
 	},
 	minute: {
-		fontSize: 11,
-		lineHeight: 12,
+		fontSize: 14,
+		lineHeight: 14,
 	},
 	timeDash: {
 		height: 15,

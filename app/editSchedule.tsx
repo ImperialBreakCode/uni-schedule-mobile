@@ -10,6 +10,7 @@ import { Subject } from "@/models/scheduleTypes";
 import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import {
+	Alert,
 	FlatList,
 	Pressable,
 	ScrollView,
@@ -39,6 +40,7 @@ function EditSchedule() {
 		title: "Selected Item",
 		headerRight: () => (
 			<RightHeaderButtons
+				onDeletePress={deleteItem}
 				onEditPress={() =>
 					router.push({
 						pathname: "editor",
@@ -55,6 +57,27 @@ function EditSchedule() {
 
 	const selectItem = (id: string) => {
 		setSelectedItemId(id);
+	};
+
+	const deleteItem = () => {
+		Alert.alert(
+			"Delete item",
+			"Are you sure you want to delete the selected item?",
+			[
+				{
+					text: "cancel",
+					style: "cancel",
+				},
+				{
+					text: "delete",
+					onPress: async () => {
+						await dataContext.deleteById(selectedItemId as string);
+						setEditData(await dataContext.getWeekData());
+						setSelectedItemId(null);
+					},
+				},
+			]
+		);
 	};
 
 	const removeSelection = () => {

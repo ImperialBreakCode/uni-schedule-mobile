@@ -30,6 +30,23 @@ class AsyncDataProvider implements DataProviderInterface {
 		}
 	}
 
+	async deleteById(id: string): Promise<void> {
+		const data = await this.getWeekData();
+
+		for (let i = 0; i < data.length; i++) {
+			let itemIndex = data[i].dayData.findIndex(
+				x => (x as Subject).id === id
+			);
+
+			if (itemIndex !== -1) {
+				data[i].dayData.splice(itemIndex, 1);
+				break;
+			}
+		}
+
+		await AsyncStorage.setItem(this._scheduleKey, JSON.stringify(data));
+	}
+
 	async saveData(data: EditorData): Promise<string | null> {
 		const weekData = await this.getWeekData();
 		const dayData = weekData.filter(x => x.day === data.day)[0].dayData;
@@ -96,8 +113,13 @@ class AsyncDataProvider implements DataProviderInterface {
 			x => x.day === todaysInfo.dayName
 		);
 
-		let processedSchedule =
-			this.processScheduleData(todaysSchedule)[0].dayData;
+		const processed = this.processScheduleData(todaysSchedule);
+
+		if (processed.length === 0) {
+			return [];
+		}
+
+		const processedSchedule = processed[0].dayData;
 
 		return processedSchedule.filter(x =>
 			typeof x !== "number" &&

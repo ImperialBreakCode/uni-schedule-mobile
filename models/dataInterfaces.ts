@@ -8,4 +8,5 @@ export interface DataProviderInterface {
 	getTodaysSchedule(): Promise<DataItem[]>;
 	getById(id: string): Promise<SubjectWithDay | null>;
 	saveData(data: EditorData): Promise<string | null>;
+	deleteById(id: string): Promise<void>;
 }

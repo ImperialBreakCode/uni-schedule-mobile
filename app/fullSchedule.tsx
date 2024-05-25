@@ -48,6 +48,13 @@ function FullSchedule() {
 				return true;
 			});
 
+			if (typeof filteredItems[0] === "number") {
+				filteredItems.shift();
+			}
+			if (typeof filteredItems[filteredItems.length - 1] === "number") {
+				filteredItems.pop();
+			}
+
 			newData.push({
 				day: item.day,
 				dayData: filteredItems,
