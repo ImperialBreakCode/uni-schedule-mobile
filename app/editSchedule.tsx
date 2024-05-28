@@ -11,7 +11,6 @@ import { useNavigation, useRouter } from "expo-router";
 import React, { useContext, useEffect, useState } from "react";
 import {
 	Alert,
-	BackHandler,
 	FlatList,
 	Pressable,
 	ScrollView,
@@ -19,10 +18,12 @@ import {
 } from "react-native";
 import { NativeStackNavigationOptions } from "react-native-screens/lib/typescript/native-stack/types";
 import { DataContext } from "./_layout";
+import { useIsFocused } from "@react-navigation/native";
 
 function EditSchedule() {
 	const navigation = useNavigation();
 	const router = useRouter();
+	const isFocused = useIsFocused();
 	const dataContext = useContext(DataContext);
 
 	const [selectedItemId, setSelectedItemId] = useState<string | null>();
@@ -92,8 +93,11 @@ function EditSchedule() {
 			setEditData(await dataContext.getWeekData());
 		}
 
-		initData();
-	}, []);
+		if (isFocused) {
+			initData();
+			setSelectedItemId(null);
+		}
+	}, [isFocused]);
 
 	useEffect(() => {
 		if (selectedItemId) {

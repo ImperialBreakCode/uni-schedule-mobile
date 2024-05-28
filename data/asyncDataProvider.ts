@@ -7,6 +7,11 @@ import {
 	Week,
 	WeekDay,
 } from "@/models/scheduleTypes";
+import { insertIntoArray } from "@/utils/appUtils";
+import {
+	convertEditorDataToSubject,
+	convertSubjectToEditorData,
+} from "@/utils/modelUtils";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 class AsyncDataProvider implements DataProviderInterface {
@@ -20,7 +25,7 @@ class AsyncDataProvider implements DataProviderInterface {
 	}
 
 	async seedData(): Promise<void> {
-		AsyncStorage.clear();
+		//AsyncStorage.clear();
 
 		if (!(await AsyncStorage.getItem(this._scheduleKey))) {
 			await AsyncStorage.setItem(
@@ -31,16 +36,14 @@ class AsyncDataProvider implements DataProviderInterface {
 	}
 
 	async updateItem(data: EditorData): Promise<string | null> {
+		const oldDay = (await this.getById(data.id!))?.day;
 		const deletedItem = await this.deleteById(data.id!);
 		const error = await this.saveData(data);
 
-		const deletedEditorData = {
-			...deletedItem,
-			day: data.day,
-			startingHour: deletedItem?.startHour.toString(),
-			weekType: data.weekType,
-			subjectType: data.subjectType,
-		} as EditorData;
+		const deletedEditorData = convertSubjectToEditorData(
+			deletedItem!,
+			oldDay!
+		);
 
 		if (error) {
 			await this.saveData(deletedEditorData);
@@ -77,32 +80,14 @@ class AsyncDataProvider implements DataProviderInterface {
 		let weekData = await this.getWeekData();
 
 		const dayArr = weekData.filter(x => x.day === data.day);
+		let dayData: DataItem[] = [];
 
+		// creating day data if it doesn't exist
 		if (dayArr.length === 0) {
-			const weekDayArr = Object.values(WeekDay);
-			const newDayIndex = weekDayArr.indexOf(data.day!);
-			let realIndex = weekData.findIndex(
-				x => weekDayArr.indexOf(x.day) - 1 === newDayIndex
-			);
-
-			if (realIndex === -1) {
-				weekData.push({
-					day: data.day!,
-					dayData: [],
-				});
-			} else {
-				weekData = [
-					...weekData.splice(0, realIndex),
-					{
-						day: data.day!,
-						dayData: [],
-					},
-					...weekData.splice(realIndex - 2),
-				];
-			}
+			weekData = this.createDay(data.day!, weekData);
+		} else {
+			dayData = dayArr[0].dayData;
 		}
-
-		const dayData = dayArr.length === 0 ? [] : dayArr[0].dayData;
 
 		const checkForExistingItem = dayData.filter(
 			x =>
@@ -117,7 +102,7 @@ class AsyncDataProvider implements DataProviderInterface {
 			return "Schedule item already exists with similar starting hour.";
 		}
 
-		const dataToInsert = this.convertEditorToAppDataObj(data);
+		const dataToInsert = convertEditorDataToSubject(data);
 		const dayIndex = weekData.findIndex(x => x.day === data.day);
 		const nextSubjIndex = dayData.findIndex(
 			x => (x as Subject).startHour >= dataToInsert.startHour
@@ -126,11 +111,11 @@ class AsyncDataProvider implements DataProviderInterface {
 		if (nextSubjIndex === -1) {
 			weekData[dayIndex].dayData.push(dataToInsert);
 		} else {
-			weekData[dayIndex].dayData = [
-				...dayData.splice(0, nextSubjIndex),
-				dataToInsert,
-				...dayData.slice(nextSubjIndex - 2),
-			];
+			weekData[dayIndex].dayData = insertIntoArray(
+				dayData,
+				nextSubjIndex,
+				dataToInsert
+			);
 		}
 
 		AsyncStorage.setItem(this._scheduleKey, JSON.stringify(weekData));
@@ -251,17 +236,25 @@ class AsyncDataProvider implements DataProviderInterface {
 		return processedData;
 	}
 
-	private convertEditorToAppDataObj(data: EditorData): Subject {
-		const subject: Subject = {
-			id: data.id ?? Date.now() + "d" + Math.random(),
-			startHour: Number(data.startingHour),
-			week: data.weekType!,
-			type: data.subjectType!,
-			name: data.name,
-			room: data.room,
+	private createDay(day: WeekDay, weekData: AppData): AppData {
+		const weekDayArr = Object.values(WeekDay);
+		const newDayIndex = weekDayArr.indexOf(day);
+		let realIndex = weekData.findIndex(
+			x => weekDayArr.indexOf(x.day) - 1 === newDayIndex
+		);
+
+		const dataToInsert = {
+			day: day,
+			dayData: [],
 		};
 
-		return subject;
+		if (realIndex === -1) {
+			weekData.push(dataToInsert);
+		} else {
+			weekData = insertIntoArray(weekData, realIndex, dataToInsert);
+		}
+
+		return weekData;
 	}
 }
 
